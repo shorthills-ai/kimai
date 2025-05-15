@@ -6,7 +6,7 @@ services:
     image: mysql:8.3.0
     restart: unless-stopped
     volumes:
-      - mysql:/var/lib/mysql
+      - mysql:/home/shsysadmin/kimai/mysql:/var/lib/mysql
     environment:
       - MYSQL_DATABASE=${MYSQL_DATABASE}
       - MYSQL_USER=${MYSQL_USER}
