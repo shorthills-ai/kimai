@@ -60,7 +60,7 @@ final class UserController extends AbstractController
         }
 
         $entries = $this->repository->getPagerfantaForQuery($query);
-
+       
         $event = new UserPreferenceDisplayEvent(UserPreferenceDisplayEvent::USERS);
         $this->dispatcher->dispatch($event);
 
@@ -80,6 +80,16 @@ final class UserController extends AbstractController
         $table->addColumn('lastLogin', ['class' => 'd-none', 'orderBy' => false]);
         $table->addColumn('roles', ['class' => 'd-none', 'orderBy' => false]);
         $table->addColumn('system_account', ['class' => 'd-none', 'orderBy' => 'systemAccount']);
+        $table->addColumn('billable', [
+            'class' => 'alwaysVisible',
+            'title' => 'Billable',
+            'orderBy' => 'billable'
+        ]);
+        $table->addColumn('position', [
+            'class' => 'alwaysVisible',
+            'title' => 'Position',
+            'orderBy' => 'position'
+        ]);
 
         foreach ($event->getPreferences() as $userPreference) {
             $table->addColumn('mf_' . $userPreference->getName(), ['title' => $userPreference->getLabel(), 'class' => 'd-none', 'orderBy' => false, 'translation_domain' => 'messages', 'data' => $userPreference]);
@@ -88,12 +98,12 @@ final class UserController extends AbstractController
         $table->addColumn('team', ['class' => 'text-center w-min', 'orderBy' => false]);
         $table->addColumn('active', ['class' => 'd-none w-min', 'orderBy' => false]);
         $table->addColumn('actions', ['class' => 'actions']);
-
+        
         $page = new PageSetup('users');
         $page->setHelp('users.html');
         $page->setActionName('users');
         $page->setDataTable($table);
-
+       
         return $this->render('user/index.html.twig', [
             'page_setup' => $page,
             'dataTable' => $table,
@@ -111,6 +121,7 @@ final class UserController extends AbstractController
         $editForm->handleRequest($request);
 
         if ($editForm->isSubmitted() && $editForm->isValid()) {
+            error_log('Form Data: ' . print_r($request->request->all(), true));
             $userService->saveUser($user);
             $this->flashSuccess('action.update.success');
 
